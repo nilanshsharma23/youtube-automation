@@ -4,9 +4,10 @@ from pathlib import Path
 import shutil
 import requests
 from bs4 import BeautifulSoup
-from yapper import PiperSpeaker, PiperVoiceUS
 from movie import generate_movie
 import screenshot_post
+import wave
+from piper import PiperVoice
 
 def scrape_subreddit_content(subreddit, limit = 10, comment_limit = 10):
     url = f"https://old.reddit.com/r/{subreddit}"
@@ -15,9 +16,7 @@ def scrape_subreddit_content(subreddit, limit = 10, comment_limit = 10):
     response = session.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    speaker = PiperSpeaker(
-        voice=PiperVoiceUS.HFC_MALE
-    )
+    voice = PiperVoice.load("en_US-sam-medium.onnx")
 
     posts = []
 
@@ -45,7 +44,8 @@ def scrape_subreddit_content(subreddit, limit = 10, comment_limit = 10):
         if not os.path.exists(f"posts/{post_count}/comments"):
             os.makedirs(f"posts/{post_count}/comments")
 
-        speaker.text_to_wave(title, f"posts/{post_count}/title.wav")
+        with wave.open(f"posts/{post_count}/title.wav", "wb") as wav_file:
+            voice.synthesize_wav(title, wav_file)
         
         comments = []
 
@@ -61,7 +61,10 @@ def scrape_subreddit_content(subreddit, limit = 10, comment_limit = 10):
 
             comment_content = comment.find("div", class_="md").find("p").get_text()
             comments.append(comment_content)
-            speaker.text_to_wave(comment_content, f"posts/{post_count}/comments/{comment_count}.wav")
+            
+            with wave.open(f"posts/{post_count}/comments/{comment_count}.wav", "wb") as comment_wave_file:
+                voice.synthesize_wav(comment_content, comment_wave_file)
+
             comment_count += 1
         
         post_content = {

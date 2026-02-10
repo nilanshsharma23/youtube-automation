@@ -3,15 +3,19 @@
 ### Packages
 
 Install required packages using this command
-`pip install -r requirements.txt`
+```
+pip install -r requirements.txt
+```
 
 ### Gameplay
 
 Get gameplay footage of any game and name it `parkour.mp4`
 
 ### Voices
-
-You can change the voice in the `speaker` property of `scrape_title_and_content.py`
-[Here is a list of all voices](https://github.com/rhasspy/piper?tab=readme-ov-file#voices)
+Download a voice by using this command
+```
+python -m piper.download_voices en_US-<voice>-medium
+```
+and then change the `voice` property in `scrape_title_and_content.py`
 
 ### That's it, run `main.py` and generate your videos!

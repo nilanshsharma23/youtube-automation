@@ -1,5 +1,5 @@
 pathlib2
 beautifulsoup4
-yapper-tts
+piper-tts
 moviepy
 selenium
